@@ -14,10 +14,11 @@ import java.util.List;
  */
 public class Joueur {
     
-    protected String nom ;
+    private String nom ;
     
-    protected List<Carte> cartes = new ArrayList<> () ;
+    private List<Carte> cartes = new ArrayList<> () ;
 
+    
     public Joueur() {
     }
     

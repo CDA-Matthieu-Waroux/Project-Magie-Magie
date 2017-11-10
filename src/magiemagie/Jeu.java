@@ -17,10 +17,15 @@ import magiemagie.Carte.TypeCarte;
  */
 public class Jeu {
 
-    protected List<Joueur> joueurs = new ArrayList<>();
-    protected int n = 0;
-    protected Joueur joueurEnCours = new Joueur();
-    protected boolean quitter = false;
+    private Carte carteBaveDeCrapaud = new Carte();
+    private Carte carteMandragore = new Carte();
+    private Carte carteLapisLazuli = new Carte();
+    private Carte carteCorneDeLicorne = new Carte();
+    private Carte carteAileChauveSouris = new Carte();
+    private List<Joueur> joueurs = new ArrayList<>();
+    private int n = 0;
+    private Joueur joueurEnCours = new Joueur();
+    private boolean quitter = false;
 
     public Jeu() {
         this.joueurs = new ArrayList<>();
@@ -30,12 +35,13 @@ public class Jeu {
 
         while (quitter == false) {
             //Afficher le menu principal
-            System.out.println("---------------------MENU PRINCIPAL----------------------------");
+            System.out.println("---------------------MENU PRINCIPAL---------------------");
             System.out.println();
             System.out.println("1) Nouveau Joueur ");
             System.out.println("2) Démarrer Partie");
             System.out.println("3) Quitter");
-            System.out.println("l) Liste des Joueurs");
+            System.out.println("L) Liste des Joueurs");
+            System.out.println("R) Régles du jeu et infos sur le jeu");
             System.out.println();
 
             //Rentrer le choix du menu
@@ -58,8 +64,13 @@ public class Jeu {
                     quitter = true;
                     System.out.println("Au revoir");
                     break;
-                case "l":
+                case "L":
                     afficheJoueurs();
+                    break;
+                case "R":
+                    System.out.println("Une bande de sorcières s'affrontent à tour de rôle en se jettant des sorts\n"
+                            + "pour devenir la Reine des Sorcières.\n"
+                            + "Il ne doit en rester qu'une !\n" + "");
                     break;
             }
         }
@@ -67,7 +78,7 @@ public class Jeu {
 
     public void afficheMenuNouveauJoueur() {
         while (quitter == false) {
-            System.out.println("---------------------MENU NOUVEAU JOUEUR----------------------------");
+            System.out.println("---------------------MENU NOUVEAU JOUEUR---------------------");
             System.out.println();
             System.out.println("1) Créer Nouveau Joueur ");
             System.out.println("2) Retour Menu Principal");
@@ -135,32 +146,41 @@ public class Jeu {
     }
 
     public void demarrerPartie() {
-        cartesAléatoires();
-        assignationDuJoueurActuel();
-        partieGagnée();
-        
+        if (joueurs.size() == 1) {
+            System.out.println("Requis plus de joueurs afin de lancer la partie");
+
+        } else {
+            cartesAléatoires();
+            assignationDuJoueurActuel();
+            partieGagnée();
+
+        }
     }
 
     public void assignationDuJoueurActuel() {
         joueurEnCours = joueurs.get(n);
     }
-    public void partieGagnée () {
+
+    public void partieGagnée() {
         if (joueurs.size() == 1) {
             System.out.println("Vous avez gagnée !!! Bravo\n" + " Tu as de grosses BOOOOOOOOOOOOOOOOOOOOOOOLS");
-            quitter = true ;
-            
-        
-    }
-        else{
+            quitter = true;
+
+        } else {
             afficheMenuAction();
-        }}
+        }
+    }
+
+    public void lancerInvisibilite() {
+
+    }
 
     public void afficheMenuAction() {
         while (joueurEnCours != null) {
 
             for (Joueur j : joueurs) {
                 Scanner sc = new Scanner(System.in);
-                System.out.println("-------------Menu D'action----------------");
+                System.out.println("---------------------Menu D'action---------------------");
                 System.out.println();
                 System.out.print(joueurEnCours.getNom() + " à vous de jouez\n");
                 System.out.println("Voici vos cartes: " + j.getCartes());
@@ -171,6 +191,7 @@ public class Jeu {
                 String choix = sc.nextLine();
                 switch (choix) {
                     case ("1"):
+                        lancerSort();
 
                         break;
                     case ("2"):
@@ -186,6 +207,100 @@ public class Jeu {
                 }
             }
         }
+    }
+
+    public void lancerSort() {
+
+        //1.affiche les sorts possible pour le joueursEnCours
+        carteBaveDeCrapaud.setTypes(TypeCarte.BAVE_DE_CRAPAUD);
+        carteCorneDeLicorne.setTypes(TypeCarte.CORNE_DE_LICORNE);
+        carteAileChauveSouris.setTypes(TypeCarte.AILE_DE_CHAUVE_SOURIS);
+        carteLapisLazuli.setTypes(TypeCarte.LAPIS_LAZULI);
+        carteMandragore.setTypes(TypeCarte.MANDRAGORE);
+
+        if (this.joueurEnCours.getCartes().contains(carteAileChauveSouris) && this.joueurEnCours.getCartes().contains(carteLapisLazuli)) {
+            System.out.println("1) Divination");
+        }
+        if (this.joueurEnCours.getCartes().contains(carteBaveDeCrapaud) && this.joueurEnCours.getCartes().contains(carteCorneDeLicorne)) {
+            System.out.println("2) Invisibilité");
+        }
+        if (this.joueurEnCours.getCartes().contains(carteBaveDeCrapaud) && this.joueurEnCours.getCartes().contains(carteLapisLazuli)) {
+            System.out.println("3) Hypnose");
+        }
+        if (this.joueurEnCours.getCartes().contains(carteCorneDeLicorne) && this.joueurEnCours.getCartes().contains(carteMandragore)) {
+            System.out.println("4) Filtre D'amour");
+        }
+        if (this.joueurEnCours.getCartes().contains(carteMandragore) && this.joueurEnCours.getCartes().contains(carteAileChauveSouris)) {
+            System.out.println("5) Sommeil-Profond");
+        }
+
+        //2.saisie le sort que l'ont veux lancer
+        Scanner sc = new Scanner(System.in);
+        String choix = sc.nextLine();
+
+        switch (choix) {
+            case "1":
+
+                sortDivination();
+
+                break;
+            case "2":
+
+                sortInvisibilite();
+                break;
+
+            case "3":
+               
+                sortHypnose();
+                break;
+            case "4":
+               
+                sortPhiltreAmour();
+
+                break;
+            case "5":
+               
+                sortSommeilProfond();
+
+                break;
+            default:
+                System.out.println("Ce sort n'existe pas enculé");
+                return;
+                
+
+        }
+
+        //3.Lancement du sort
+        //4.Supprime les cartes utilisé lors du sort
+    }
+
+    public void sortDivination() {
+        if (this.joueurEnCours.getCartes().contains(carteAileChauveSouris) && this.joueurEnCours.getCartes().contains(carteLapisLazuli)) {
+
+        }
+    }
+
+    public void sortInvisibilite() {
+        if (this.joueurEnCours.getCartes().contains(carteBaveDeCrapaud) && this.joueurEnCours.getCartes().contains(carteCorneDeLicorne)) {
+
+        }
+
+    }
+
+    public void sortPhiltreAmour() {
+ if (this.joueurEnCours.getCartes().contains(carteCorneDeLicorne) && this.joueurEnCours.getCartes().contains(carteMandragore)) {
+                }
+    }
+
+    public void sortSommeilProfond() {
+ if (this.joueurEnCours.getCartes().contains(carteMandragore) && this.joueurEnCours.getCartes().contains(carteAileChauveSouris)) {
+                }
+    }
+
+    public void sortHypnose() {
+ if (this.joueurEnCours.getCartes().contains(carteBaveDeCrapaud) && this.joueurEnCours.getCartes().contains(carteLapisLazuli)) {
+
+                }
     }
 
     public void passezTours(Joueur joueur) {
